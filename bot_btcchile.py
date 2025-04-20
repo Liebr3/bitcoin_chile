@@ -5,6 +5,7 @@ import os
 from flask import Flask, request
 import time 
 from waitress import serve # entorno de produccion
+from bs4 import BeautifulSoup
 
 
 
@@ -22,7 +23,6 @@ def webhook():
         update = telebot.types.Update.de_json(request.stream.read().decode('UTF-8'))
         bot.process_new_updates([update])
         return 'ok', 200 
-
 
 
 def start_webhook():
@@ -62,7 +62,7 @@ def price_command(message):
 
 
 
-
+# set de comandos del bot
 bot.set_my_commands([
     telebot.types.BotCommand("/start", "Descripción del bot"),
     telebot.types.BotCommand("/btc", "BTC/USD"),
@@ -70,6 +70,20 @@ bot.set_my_commands([
     telebot.types.BotCommand("/dominance", "Dominancia de BTC"),
     telebot.types.BotCommand("/ath", "Ultimo ATH de BTC")])
 
+# seccion de scraping
+
+def beautiful(url):  
+    while True:
+        try:
+            driver.get(url)
+            source = driver.page_source
+            break
+        except requests.exceptions.ConnectionError:
+            print("Connection Error....the program is waiting for a moment to try again...")
+            time.sleep(0.1)
+
+    soup = BeautifulSoup(source, 'lxml')
+    return soup
 
 #*************MAIN********************************************************
 if __name__ == "__main__":
