@@ -6,7 +6,7 @@ from flask import Flask, request
 import time 
 from waitress import serve # entorno de produccion
 
-
+from pyngrok import ngrok, conf  # to create tunneling bt host and server
 
 # Cargar variables de entorno
 load_dotenv()
@@ -26,12 +26,12 @@ def webhook():
 
 
 
-def start_webhook():
-    # Configuración del webhook
-    bot.remove_webhook()
-    time.sleep(1)
-    bot.set_webhook(url="https://telebot-bitcoinchile.onrender.com")
-    serve(web_server, host="0.0.0.0", port=5000)
+# def start_webhook():
+#     # Configuración del webhook
+#     bot.remove_webhook()
+#     time.sleep(1)
+#     bot.set_webhook(url="https://telebot-bitcoinchile.onrender.com")
+#     serve(web_server, host="0.0.0.0", port=5000)
 
 
 # bienvenida al usuario
@@ -72,6 +72,29 @@ bot.set_my_commands([
     telebot.types.BotCommand("/ath", "Ultimo ATH de BTC")])
 
 
+#seting ngrok
+def function_bot():
+    # define path config file of ngrok
+    conf.get_default().config_path = "./config_ngrok.yml"
+    # region "sa" = south america
+    conf.get_default().region = "sa"
+    # credentials file from ngrok
+    ngrok.set_auth_token(NGROK_TOKEN)
+    # create tunnel https port 5000
+    ngrok_tunel = ngrok.connect(5000, bind_tls=True)
+    # urls from created tunnel
+    ngrok_url = ngrok_tunel.public_url
+    # remove former webhook
+    bot.remove_webhook()
+    # littl pause
+    time.sleep(1)
+    # define webhook
+    bot.set_webhook(url=ngrok_url)
+    # start web server
+    serve(web_server, host="0.0.0.0", port=5000)
+    print("start nuevo server")
+    # print("bot iniciado, ejecutando whale alert...")
+
 #*************MAIN********************************************************
 if __name__ == "__main__":
 
@@ -79,7 +102,9 @@ if __name__ == "__main__":
     print("Start the bot")
     
     # Start ngrok server   
-    tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
+    # tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
+    # tr_webhook.start()
+    tr_webhook = threading.Thread(name="tr_webhook", target=function_bot)
     tr_webhook.start()
     
     print("through the threads....")
