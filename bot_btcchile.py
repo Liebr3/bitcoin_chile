@@ -11,6 +11,7 @@ from waitress import serve # entorno de produccion
 # Cargar variables de entorno
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+NGROK_TOKEN =os.getenv("NGROK_TOKEN")
 print(f"TELEGRAM_TOKEN: '{TELEGRAM_TOKEN}'")  # Depuración
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
