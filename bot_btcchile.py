@@ -6,6 +6,16 @@ from flask import Flask, request
 import time 
 from waitress import serve # entorno de produccion
 
+from selenium import webdriver
+from requests_html import HTMLSession
+from bs4 import BeautifulSoup
+import requests
+
+
+
+driver = webdriver.Chrome()
+lock = threading.Lock()
+
 from pyngrok import ngrok, conf  # to create tunneling bt host and server
 
 # Cargar variables de entorno
@@ -50,7 +60,7 @@ def price_command(message):
     mensaje_text = message.text
     if '/btc' in mensaje_text.lower(): 
         print("precio de bitcoin")
-        bot.send_message(message.chat.id, "Numbers goes up!" )
+        bot.send_message(message.chat.id, "$" + usd_clp() + " USD " )
     if '/dominance' in mensaje_text.lower(): 
         print("Dominancia de bitcoin")
         bot.send_message(message.chat.id, "Muy alta, tristemente para los shitcoinlovers" )
@@ -72,8 +82,39 @@ bot.set_my_commands([
     telebot.types.BotCommand("/ath", "Ultimo ATH de BTC")])
 
 
+
+#scrap functions
+#https://coinmarketcap.com/currencies/bitcoin/
+#<span class="sc-65e7f566-0 WXGwg base-text" data-test="text-cdp-price-display">$88,028.90</span>
+def beautiful(url):    # here is the trouble
+    print("en beautiful")
+    while True:
+        try:
+            driver.get(url)
+            source = driver.page_source
+            break
+        except requests.exceptions.ConnectionError:
+            print("Connection Error....the program is waiting for a moment to try again...")
+            time.sleep(0.1)
+
+    soup = BeautifulSoup(source, 'lxml')
+    return soup
+
+
+def usd_clp():
+    print("en usd_clp")
+    try:
+        url = "https://coinmarketcap.com/currencies/bitcoin/"
+        with lock:
+            soup = beautiful(url)
+            price = soup.find('span', class_="sc-65e7f566-0 WXGwg base-text").text
+            return price
+    except Exception as e:
+        print(f"Error fetching USD/CLP price: {e}")
+        return "0"
 #seting ngrok
 def function_bot():
+    print("cargando ngrok")
     # define path config file of ngrok
     conf.get_default().config_path = "./config_ngrok.yml"
     # region "sa" = south america
