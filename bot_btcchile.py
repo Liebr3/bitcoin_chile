@@ -7,16 +7,28 @@ import time
 from waitress import serve # entorno de produccion
 
 from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.service import Service
+
+from pyngrok import ngrok, conf  # to create tunneling bt host and server
+
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 import requests
 
 
+# chrome_options = Options()
+# chrome_options.add_argument("--headless")  # Ejecutar en modo headless
+# chrome_options.add_argument("--disable-gpu")  # Deshabilitar GPU
+# chrome_options.add_argument("--no-sandbox")  # Requerido en entornos como Render
+# chrome_options.add_argument("--disable-dev-shm-usage")  # Soluciona problemas de memoria compartida
+# chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 
+# service = Service("/usr/local/bin/chromedriver") 
+# driver = webdriver.Chrome(service=service, options=chrome_options)
 driver = webdriver.Chrome()
 lock = threading.Lock()
 
-from pyngrok import ngrok, conf  # to create tunneling bt host and server
 
 # Cargar variables de entorno
 load_dotenv()
@@ -24,16 +36,6 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 NGROK_TOKEN =os.getenv("NGROK_TOKEN")
 print(f"TELEGRAM_TOKEN: '{TELEGRAM_TOKEN}'")  # Depuración
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
-
-# webhook
-web_server = Flask(__name__)
-@web_server.route('/', methods=['POST'])
-def webhook():
-    if request.headers.get('content-type') == 'application/json':
-        update = telebot.types.Update.de_json(request.stream.read().decode('UTF-8'))
-        bot.process_new_updates([update])
-        return 'ok', 200 
-
 
 
 # def start_webhook():
@@ -60,7 +62,9 @@ def price_command(message):
     mensaje_text = message.text
     if '/btc' in mensaje_text.lower(): 
         print("precio de bitcoin")
-        bot.send_message(message.chat.id, "$" + usd_clp() + " USD " )
+        url = "https://www.tradingview.com/symbols/BTCUSD/?exchange=BITSTAMP"
+        # url = "https://coinmarketcap.com/currencies/bitcoin/"
+        bot.send_message(message.chat.id, "$" + scrap(url) + " USD " )
     if '/dominance' in mensaje_text.lower(): 
         print("Dominancia de bitcoin")
         bot.send_message(message.chat.id, "Muy alta, tristemente para los shitcoinlovers" )
@@ -70,8 +74,6 @@ def price_command(message):
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " $109.000 USD " )
-
-
 
 
 bot.set_my_commands([
@@ -84,58 +86,49 @@ bot.set_my_commands([
 
 
 #scrap functions
-#https://coinmarketcap.com/currencies/bitcoin/
-#<span class="sc-65e7f566-0 WXGwg base-text" data-test="text-cdp-price-display">$88,028.90</span>
-def beautiful(url):    # here is the trouble
-    print("en beautiful")
-    while True:
-        try:
-            driver.get(url)
-            source = driver.page_source
-            break
-        except requests.exceptions.ConnectionError:
-            print("Connection Error....the program is waiting for a moment to try again...")
-            time.sleep(0.1)
 
+def scrap(url):
+    driver.get(url)
+    source = driver.page_source
+    # input("")
+    print("inside scrap")
+    print("url: ", url)
     soup = BeautifulSoup(source, 'lxml')
-    return soup
+    price = soup.find('span', class_="last-zoF9r75I js-symbol-last").text # tradingview
 
+    # price = soup.find('span', class_="priceValue___11gHJ").text # tradingview
+    # price = soup.find('span', class_="price___3rj7O").text # tradingview    
+    # price = soup.find('span', class_="js-symbol-last").text
 
-def usd_clp():
-    print("en usd_clp")
-    try:
-        url = "https://coinmarketcap.com/currencies/bitcoin/"
-        with lock:
-            soup = beautiful(url)
-            price = soup.find('span', class_="sc-65e7f566-0 WXGwg base-text").text
-            return price
-    except Exception as e:
-        print(f"Error fetching USD/CLP price: {e}")
-        return "0"
-#seting ngrok
+    # price = soup.find('span', class_="sc-65e7f566-0 WXGwg base-text").text #coinmarketcap
+    print("price type ", type(price))
+    print("price: ", price)
+    return price
+#url = "https://coinmarketcap.com/currencies/bitcoin/"
+       
+# setting webhook
+web_server = Flask(__name__)
+@web_server.route('/', methods=['POST'])
+def webhook():
+    if request.headers.get('content-type') == 'application/json':
+        update = telebot.types.Update.de_json(request.stream.read().decode('UTF-8'))
+        bot.process_new_updates([update])
+        return 'ok', 200 
+
+#setting ngrok
 def function_bot():
     print("cargando ngrok")
-    # define path config file of ngrok
     conf.get_default().config_path = "./config_ngrok.yml"
-    # region "sa" = south america
     conf.get_default().region = "sa"
-    # credentials file from ngrok
     ngrok.set_auth_token(NGROK_TOKEN)
-    # create tunnel https port 5000
     ngrok_tunel = ngrok.connect(5000, bind_tls=True)
-    # urls from created tunnel
     ngrok_url = ngrok_tunel.public_url
-    # remove former webhook
     bot.remove_webhook()
-    # littl pause
     time.sleep(1)
-    # define webhook
     bot.set_webhook(url=ngrok_url)
-    # start web server
     serve(web_server, host="0.0.0.0", port=5000)
     print("start nuevo server")
-    # print("bot iniciado, ejecutando whale alert...")
-
+    
 #*************MAIN********************************************************
 if __name__ == "__main__":
 
