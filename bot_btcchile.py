@@ -44,7 +44,7 @@ def price_command(message):
     if '/btc' in mensaje_text.lower(): 
         print("precio de bitcoin")
         url = "https://www.tradingview.com/symbols/BTCUSD/?exchange=BITSTAMP"
-        bot.send_message(message.chat.id, "$" + scrap(url) + " USD " )
+        bot.send_message(message.chat.id, "BTC $" + scrap(url) + " USD " )
     if '/dominance' in mensaje_text.lower(): 
         print("Dominancia de bitcoin")
         url = "https://www.tradingview.com/symbols/BTC.D/?exchange=CRYPTOCAP"
@@ -52,11 +52,11 @@ def price_command(message):
     if '/eth' in mensaje_text.lower(): 
         print("precio de ethereum")
         url = "https://www.tradingview.com/symbols/ETHUSD/?exchange=BITSTAMP"
-        bot.send_message(message.chat.id, "$" + scrap(url) + " USD " )
+        bot.send_message(message.chat.id, "ETH $" + scrap(url) + " USD " )
     if '/dxy' in mensaje_text.lower(): 
         print("Dollar index")
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
-        bot.send_message(message.chat.id, "$" + scrap(url) + " USD " )
+        bot.send_message(message.chat.id, "DXY $" + scrap(url) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $109.356 USD " )
