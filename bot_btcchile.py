@@ -57,6 +57,10 @@ def price_command(message):
         print("Dollar index")
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
         bot.send_message(message.chat.id, "DXY $" + scrap(url) + " USD " )
+    if '/gold' in mensaje_text.lower(): 
+        print("CFD on GOLD")
+        url = "https://www.tradingview.com/symbols/GOLD/"
+        bot.send_message(message.chat.id, "GOLD $" + scrap(url) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $109.356 USD " )
@@ -67,6 +71,7 @@ bot.set_my_commands([
     telebot.types.BotCommand("/btc", "BTC/USD"),
     telebot.types.BotCommand("/eth", "ETH/USD"),
     telebot.types.BotCommand("/dominance", "Dominancia de BTC"),
+    telebot.types.BotCommand("/gold", "Gold/USD"),
     telebot.types.BotCommand("/ath", "Ultimo ATH de BTC")])
 
 
