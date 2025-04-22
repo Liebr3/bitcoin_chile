@@ -53,7 +53,7 @@ def price_command(message):
         bot.send_message(message.chat.id, "Numbers goes down!" )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
-        bot.send_message(message.chat.id, " $109.356 USD " )
+        bot.send_message(message.chat.id, " ATH $109.356 USD " )
 
 
 bot.set_my_commands([
