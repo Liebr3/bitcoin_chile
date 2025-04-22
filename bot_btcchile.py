@@ -33,7 +33,8 @@ def cmd_start(message):
     """welcome to user"""
     bot.reply_to(message, "Bienvenido al bot Bitcoin-Precio al instante " + "\n"
                           "✰ ℒiℯხřℯ_ďℯ_₿ọt 🄰🄻🄴🅁🅃 ✰" + "\n"
-                          "El bot esta en reparacion y en proceso de busqueda de servidor" + "\n")            
+                          "El bot ya cuenta con servidor " + "\n"
+                          "El bot esta en proceso de  optimización" + "\n")            
 
 # comandos del bot
 
@@ -52,7 +53,7 @@ def price_command(message):
         bot.send_message(message.chat.id, "Numbers goes down!" )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
-        bot.send_message(message.chat.id, " $109.000 USD " )
+        bot.send_message(message.chat.id, " $109.356 USD " )
 
 
 bot.set_my_commands([
