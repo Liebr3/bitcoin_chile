@@ -97,9 +97,10 @@ def start_webhook():
     # Configuración del webhook
     bot.remove_webhook()
     time.sleep(1)
-    bot.set_webhook(url="https://telebot-bitcoinchile.onrender.com")
+    #bot.set_webhook(url="https://telebot-bitcoinchile.onrender.com")
+    bot.set_webhook(url="https://bitcoin-chile-telebot.onrender.com")
     serve(web_server, host="0.0.0.0", port=5000)
-    
+
 #setting ngrok
 # def function_bot():
 #     print("cargando ngrok")
