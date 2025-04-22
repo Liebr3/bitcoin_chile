@@ -7,8 +7,7 @@ import time
 from waitress import serve # entorno de produccion
 
 from selenium import webdriver
-# from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 from pyngrok import ngrok, conf  # to create tunneling bt host and server
 
@@ -16,17 +15,6 @@ from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 import requests
 
-
-# chrome_options = Options()
-# chrome_options.add_argument("--headless")  # Ejecutar en modo headless
-# chrome_options.add_argument("--disable-gpu")  # Deshabilitar GPU
-# chrome_options.add_argument("--no-sandbox")  # Requerido en entornos como Render
-# chrome_options.add_argument("--disable-dev-shm-usage")  # Soluciona problemas de memoria compartida
-# chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-
-# service = Service("/usr/local/bin/chromedriver") 
-# driver = webdriver.Chrome(service=service, options=chrome_options)
-driver = webdriver.Chrome()
 lock = threading.Lock()
 
 
@@ -88,24 +76,22 @@ bot.set_my_commands([
 #scrap functions
 
 def scrap(url):
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Ejecutar en modo headless (opcional)
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     source = driver.page_source
-    # input("")
     print("inside scrap")
     print("url: ", url)
     soup = BeautifulSoup(source, 'lxml')
     price = soup.find('span', class_="last-zoF9r75I js-symbol-last").text # tradingview
-
-    # price = soup.find('span', class_="priceValue___11gHJ").text # tradingview
-    # price = soup.find('span', class_="price___3rj7O").text # tradingview    
-    # price = soup.find('span', class_="js-symbol-last").text
-
-    # price = soup.find('span', class_="sc-65e7f566-0 WXGwg base-text").text #coinmarketcap
-    print("price type ", type(price))
-    print("price: ", price)
+    print("price 1 ", price)
+    driver.quit()
     return price
-#url = "https://coinmarketcap.com/currencies/bitcoin/"
-       
+
 # setting webhook
 web_server = Flask(__name__)
 @web_server.route('/', methods=['POST'])
