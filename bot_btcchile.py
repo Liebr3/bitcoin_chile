@@ -9,7 +9,7 @@ from waitress import serve # entorno de produccion
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-# from pyngrok import ngrok, conf  # to create tunneling bt host and server
+from pyngrok import ngrok, conf  # to create tunneling bt host and server
 
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
@@ -47,10 +47,16 @@ def price_command(message):
         bot.send_message(message.chat.id, "$" + scrap(url) + " USD " )
     if '/dominance' in mensaje_text.lower(): 
         print("Dominancia de bitcoin")
-        bot.send_message(message.chat.id, "Muy alta, tristemente para los shitcoinlovers" )
+        url = "https://www.tradingview.com/symbols/BTC.D/?exchange=CRYPTOCAP"
+        bot.send_message(message.chat.id,  "BTC.D " + scrap(url) + " % "  )
     if '/eth' in mensaje_text.lower(): 
         print("precio de ethereum")
-        bot.send_message(message.chat.id, "Numbers goes down!" )
+        url = "https://www.tradingview.com/symbols/ETHUSD/?exchange=BITSTAMP"
+        bot.send_message(message.chat.id, "$" + scrap(url) + " USD " )
+    if '/dxy' in mensaje_text.lower(): 
+        print("Dollar index")
+        url = "https://www.tradingview.com/symbols/TVC-DXY/"
+        bot.send_message(message.chat.id, "$" + scrap(url) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $109.356 USD " )
@@ -94,27 +100,27 @@ def webhook():
         return 'ok', 200 
     
 
-def start_webhook():
-    # Configuración del webhook
-    bot.remove_webhook()
-    time.sleep(1)
-    #bot.set_webhook(url="https://telebot-bitcoinchile.onrender.com")
-    bot.set_webhook(url="https://bitcoin-chile-telebot.onrender.com")
-    serve(web_server, host="0.0.0.0", port=5000)
-
-#setting ngrok
-# def function_bot():
-#     print("cargando ngrok")
-#     conf.get_default().config_path = "./config_ngrok.yml"
-#     conf.get_default().region = "sa"
-#     ngrok.set_auth_token(NGROK_TOKEN)
-#     ngrok_tunel = ngrok.connect(5000, bind_tls=True)
-#     ngrok_url = ngrok_tunel.public_url
+# def start_webhook():
+#     # Configuración del webhook
 #     bot.remove_webhook()
 #     time.sleep(1)
-#     bot.set_webhook(url=ngrok_url)
+#     #bot.set_webhook(url="https://telebot-bitcoinchile.onrender.com")
+#     bot.set_webhook(url="https://bitcoin-chile-telebot.onrender.com")
 #     serve(web_server, host="0.0.0.0", port=5000)
-#     print("start nuevo server")
+
+#setting ngrok
+def function_bot():
+    print("cargando ngrok")
+    conf.get_default().config_path = "./config_ngrok.yml"
+    conf.get_default().region = "sa"
+    ngrok.set_auth_token(NGROK_TOKEN)
+    ngrok_tunel = ngrok.connect(5000, bind_tls=True)
+    ngrok_url = ngrok_tunel.public_url
+    bot.remove_webhook()
+    time.sleep(1)
+    bot.set_webhook(url=ngrok_url)
+    serve(web_server, host="0.0.0.0", port=5000)
+    print("start nuevo server")
     
 #*************MAIN********************************************************
 if __name__ == "__main__":
@@ -123,10 +129,10 @@ if __name__ == "__main__":
     print("Start the bot")
     
     # Start ngrok server   
-    tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
-    tr_webhook.start()
-    # tr_webhook = threading.Thread(name="tr_webhook", target=function_bot)
+    # tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
     # tr_webhook.start()
+    tr_webhook = threading.Thread(name="tr_webhook", target=function_bot)
+    tr_webhook.start()
     
     print("through the threads....")
 #*************END*********************************************************
