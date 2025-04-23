@@ -38,7 +38,7 @@ def cmd_start(message):
 
 # comandos del bot
 
-@bot.message_handler(commands=["btc", "eth", "dominance", "ath"])
+@bot.message_handler(commands=["btc", "eth", "dominance", "gold", "ath"])
 def price_command(message):
     mensaje_text = message.text
     if '/btc' in mensaje_text.lower(): 
@@ -58,9 +58,13 @@ def price_command(message):
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
         bot.send_message(message.chat.id, "DXY $" + scrap(url) + " USD " )
     if '/gold' in mensaje_text.lower(): 
-        print("CFD on GOLD")
+        print("Gold")
         url = "https://www.tradingview.com/symbols/GOLD/"
         bot.send_message(message.chat.id, "GOLD $" + scrap(url) + " USD " )
+    # if '/gold' in mensaje_text.lower(): 
+    #     print("CFD on GOLD")
+    #     url = "https://www.tradingview.com/symbols/GOLD/"
+    #     bot.send_message(message.chat.id, "GOLD $" + scrap(url) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $109.356 USD " )
