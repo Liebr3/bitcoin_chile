@@ -107,7 +107,7 @@ def price_command(message):
     if '/piusd' in mensaje_text.lower(): 
         print("Pi Network")
         url = "https://www.tradingview.com/symbols/PIUSDT/?exchange=BITGET"
-        bot.send_message(message.chat.id, "PiNetwork $ " + scrp(url)) + " USD " )
+        bot.send_message(message.chat.id, "PiNetwork $ " + scrap(url) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $ 109.356 USD " )
