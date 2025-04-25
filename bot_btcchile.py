@@ -62,54 +62,55 @@ def price_command(message):
         print("precio de bitcoin")
         symbol = "BTCUSD"
         exchange = "BITSTAMP"
-        bot.send_message(message.chat.id, f"BTC  $  {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"BTC $ {format_price(coin_price(symbol, exchange))} USD " )
     if '/eth' in mensaje_text.lower(): 
         print("precio de ethereum")
-        symbol = "ETHUSD"  
+        symbol = "ETHUSD"
         exchange = "BITSTAMP"
-        bot.send_message(message.chat.id, f"ETH  $  {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"ETH $ {format_price(coin_price(symbol, exchange))} USD " )
     if '/sol' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "SOLUSDT"
         exchange = "BINANCE"
-        bot.send_message(message.chat.id, f"SOL  $  {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"SOL $ {format_price(coin_price(symbol, exchange))} USD " )
     if '/xrp' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "XRPUSD"
         exchange = "BITSTAMP"
-        bot.send_message(message.chat.id, f"XRP  $  {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"XRP $ {format_price(coin_price(symbol, exchange))} USD " )
     # STOCK SECTION
     if '/mstr' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "MSTR"
         exchange = "nasdaq"
-        bot.send_message(message.chat.id, f"MSTR  $  {stock_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"MSTR $ {format_price(stock_price(symbol, exchange))} USD " )
     if '/tsla' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "TSLA"
         exchange = "nasdaq"
-        bot.send_message(message.chat.id, f"TSLA  $  {stock_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"TSLA $ {format_price(stock_price(symbol, exchange))} USD " )
     
     if '/dominance' in mensaje_text.lower(): 
         print("Dominancia de bitcoin")        
-        bot.send_message(message.chat.id,  f" BTC.D $  {get_btc_dominance()} %")
+        bot.send_message(message.chat.id,  f" BTC.D {format_price(get_btc_dominance())} %")
 
     # SCRAP SECTION
     if '/gold' in mensaje_text.lower(): 
         print("Gold")
         url = "https://www.tradingview.com/symbols/GOLD/"
-        bot.send_message(message.chat.id, "GOLD $" + scrap(url) + " USD " )    
+        bot.send_message(message.chat.id, "GOLD $ " + format_price(scrap(url)) + " USD " )    
     if '/dxy' in mensaje_text.lower(): 
         print("Dollar index")
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
-        bot.send_message(message.chat.id, "DXY $" + scrap(url) + " USD " )
+        bot.send_message(message.chat.id, "DXY $ " + format_price(scrap(url)) + " USD " )
     if '/piusd' in mensaje_text.lower(): 
         print("Pi Network")
         url = "https://www.tradingview.com/symbols/PIUSDT/?exchange=BITGET"
-        bot.send_message(message.chat.id, "PiNetwork $" + scrap(url) + " USD " )
+        bot.send_message(message.chat.id, "PiNetwork $ " + format_price(scrap(url)) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
-        bot.send_message(message.chat.id, " ATH $109.356 USD " )
+        bot.send_message(message.chat.id, " ATH $ 109.356 USD " )
+
 
 
 
@@ -200,9 +201,14 @@ def get_btc_dominance():
         return None
 #formato
 def format_price(price):
-    try:
-        # Convertir el precio a float y formatearlo con separadores de miles
-        formatted_price = "{:,.2f}".format(float(price))
+    try:        
+        # Eliminar separadores de miles (coma) del string
+        if isinstance(price, str):
+            price = price.replace(",", "")  # Eliminar la coma
+        # Configurar la localización para usar separadores de miles y decimales según tu región
+        locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')  # Cambia 'es_ES.UTF-8' según tu configuración local
+        # Convertir el precio a float y formatearlo con separadores de miles y decimales
+        formatted_price = locale.format_string("%.2f", float(price), grouping=True)
         return formatted_price
     except ValueError:
         print("Error al formatear el precio. Asegúrate de que sea un número válido.")
