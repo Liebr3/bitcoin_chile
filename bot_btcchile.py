@@ -2,7 +2,8 @@ import telebot
 import threading
 
 import os
-import time 
+import time
+import locale 
 
 from flask import Flask, request
 from waitress import serve # entorno de produccion
