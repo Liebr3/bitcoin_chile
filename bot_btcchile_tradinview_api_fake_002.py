@@ -36,7 +36,7 @@ def cmd_start(message):
     """welcome to user"""
     bot.reply_to(message, "Bienvenido al bot Bitcoin-Precio al instante " + "\n"
                           "✰ ℒiℯხřℯ_ďℯ_₿ọt 🄰🄻🄴🅁🅃 ✰" + "\n"
-                          "El bot ya cuenta con servidor " + "\n"
+                          "Version de pruebas " + "\n"
                           "El bot esta en proceso de  optimización" + "\n")            
 
 # comandos del bot
@@ -118,9 +118,7 @@ bot.set_my_commands([
 #scrap functions
 
 def scrap(url):
-    # Enviar mensaje de espera al canal
-    
-    bot.send_message(CHAT_ID, "Webscrap... Espere mientras se recojen los datos...")
+        
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Ejecutar en modo headless (opcional)
     chrome_options.add_argument("--disable-gpu")
@@ -133,10 +131,14 @@ def scrap(url):
     print("url: ", url)
     soup = BeautifulSoup(source, 'lxml')
     price = soup.find('span', class_="last-zoF9r75I js-symbol-last").text # tradingview
-    print("price 1 ", price)
+    # print("price 1 ", price)
+    # Detener la animación
+    
     driver.quit()
+    print("finalizando el webscrap")
     return price
 
+# api functions
 def get_coin_price(symbol, exchange):
     coin = TA_Handler(
         symbol=symbol,
@@ -150,7 +152,6 @@ def coin_price(symbol, exchange):
     with lock:
         price = get_coin_price(symbol, exchange)
         print(f"{symbol} price: ", price)
-        # print("type ada", type(price))
         return price
 
 
@@ -167,7 +168,6 @@ def stock_price(symbol, exchange):
     with lock:
         price = get_stock_price(symbol, exchange)
         print(f"{symbol} price: ", price)
-        # print("type ada", type(price))
         return price
 
 
@@ -181,12 +181,12 @@ def get_btc_dominance():
             btc_dominance = data["data"]["market_cap_percentage"]["btc"]
             return round(btc_dominance, 2)  # Redondear a 2 decimales
         else:
-            print(f"Error al obtener la dominancia desde api....scraping....: {e}")
+            print(f"Error de api....scraping {e}")
             url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
-            btc_dominance = format_price(scrap(url))
+            btc_dominance = scrap(url)
             return btc_dominance
     except Exception as e:
-        print(f"Error al obtener la dominancia desde api....scraping....: {e}")
+        print(f"Error de api....scraping  {e}")
         url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
         btc_dominance = scrap(url)
         return btc_dominance
