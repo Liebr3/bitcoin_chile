@@ -3,11 +3,9 @@ import threading
 
 import os
 import time
-# import locale 
 
 from flask import Flask, request
 from waitress import serve # entorno de produccion
-from pyngrok import ngrok, conf  # to create tunneling bt host and server
 
 import requests
 from requests_html import HTMLSession
@@ -63,33 +61,33 @@ def price_command(message):
         print("precio de bitcoin")
         symbol = "BTCUSD"
         exchange = "BITSTAMP"
-        bot.send_message(message.chat.id, f"BTC $ {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"BTC $ {format_price(coin_price(symbol, exchange))} USD " )
     if '/eth' in mensaje_text.lower(): 
         print("precio de ethereum")
         symbol = "ETHUSD"
         exchange = "BITSTAMP"
-        bot.send_message(message.chat.id, f"ETH $ {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"ETH $ {format_price(coin_price(symbol, exchange))} USD " )
     if '/sol' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "SOLUSDT"
         exchange = "BINANCE"
-        bot.send_message(message.chat.id, f"SOL $ {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"SOL $ {format_price(coin_price(symbol, exchange))} USD " )
     if '/xrp' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "XRPUSD"
         exchange = "BITSTAMP"
-        bot.send_message(message.chat.id, f"XRP $ {coin_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"XRP $ {format_price(coin_price(symbol, exchange))} USD " )
     # STOCK SECTION
     if '/mstr' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "MSTR"
         exchange = "nasdaq"
-        bot.send_message(message.chat.id, f"MSTR $ {stock_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"MSTR $ {format_price(stock_price(symbol, exchange))} USD " )
     if '/tsla' in mensaje_text.lower(): 
         print("precio de solana")
         symbol = "TSLA"
         exchange = "nasdaq"
-        bot.send_message(message.chat.id, f"TSLA $ {stock_price(symbol, exchange)} USD " )
+        bot.send_message(message.chat.id, f"TSLA $ {format_price(stock_price(symbol, exchange))} USD " )
     
     if '/dominance' in mensaje_text.lower(): 
         print("Dominancia de bitcoin")        
@@ -99,15 +97,15 @@ def price_command(message):
     if '/gold' in mensaje_text.lower(): 
         print("Gold")
         url = "https://www.tradingview.com/symbols/GOLD/"
-        bot.send_message(message.chat.id, "GOLD $ " + scrap(url) + " USD " )    
+        bot.send_message(message.chat.id, "GOLD $ " + format_price(scrap(url) + " USD " ))    
     if '/dxy' in mensaje_text.lower(): 
         print("Dollar index")
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
-        bot.send_message(message.chat.id, "DXY $ " + scrap(url) + " USD " )
+        bot.send_message(message.chat.id, "DXY $ " + format_price(scrap(url) + " USD " ))
     if '/piusd' in mensaje_text.lower(): 
         print("Pi Network")
         url = "https://www.tradingview.com/symbols/PIUSDT/?exchange=BITGET"
-        bot.send_message(message.chat.id, "PiNetwork $ " + scrap(url) + " USD " )
+        bot.send_message(message.chat.id, "PiNetwork $ " + format_price(scrap(url) + " USD " ))
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $ 109.356 USD " )
@@ -195,25 +193,27 @@ def get_btc_dominance():
             btc_dominance = data["data"]["market_cap_percentage"]["btc"]
             return round(btc_dominance, 2)  # Redondear a 2 decimales
         else:
-            print(f"Error al acceder a la API: {response.status_code}")
-            return None
+            print(f"Error de api....scraping {e}")
+            url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
+            btc_dominance = scrap(url)
+            return btc_dominance
     except Exception as e:
-        print(f"Error al obtener la dominancia de BTC: {e}")
-        return None
-#formato
-# def price):
-#     try:        
-#         # Eliminar separadores de miles (coma) del string
-#         if isinstance(price, str):
-#             price = price.replace(",", "")  # Eliminar la coma
-#         # Configurar la localización para usar separadores de miles y decimales según tu región
-#         locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')  # Cambia 'es_ES.UTF-8' según tu configuración local
-#         # Convertir el precio a float y formatearlo con separadores de miles y decimales
-#         formatted_price = locale.format_string("%.2f", float(price), grouping=True)
-#         return formatted_price
-#     except ValueError:
-#         print("Error al formatear el precio. Asegúrate de que sea un número válido.")
-#         return price
+        print(f"Error de api....scraping  {e}")
+        url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
+        btc_dominance = scrap(url)
+        return btc_dominance
+    
+def format_price(price):
+    try:
+        # Eliminar separadores de miles si existen
+        if isinstance(price, str):
+            price = price.replace(",", "")
+        # Convertir a float y formatear manualmente
+        formatted_price = "{:,.2f}".format(float(price)).replace(",", "X").replace(".", ",").replace("X", ".")
+        return formatted_price
+    except ValueError:
+        print("Error al formatear el precio. Asegúrate de que sea un número válido.")
+        return price
 
 #*************MAIN********************************************************
 if __name__ == "__main__":
