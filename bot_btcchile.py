@@ -98,15 +98,15 @@ def price_command(message):
     if '/gold' in mensaje_text.lower(): 
         print("Gold")
         url = "https://www.tradingview.com/symbols/GOLD/"
-        bot.send_message(message.chat.id, "GOLD $ " + format_price(scrap(url)) + " USD " )    
+        bot.send_message(message.chat.id, "GOLD $ " + format_price(execute_Scrap(url)) + " USD " )    
     if '/dxy' in mensaje_text.lower(): 
         print("Dollar index")
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
-        bot.send_message(message.chat.id, "DXY $ " + format_price(scrap(url)) + " USD " )
+        bot.send_message(message.chat.id, "DXY $ " + format_price(execute_Scrap(url)) + " USD " )
     if '/piusd' in mensaje_text.lower(): 
         print("Pi Network")
         url = "https://www.tradingview.com/symbols/PIUSDT/?exchange=BITGET"
-        bot.send_message(message.chat.id, "PiNetwork $ " + format_price(scrap(url)) + " USD " )
+        bot.send_message(message.chat.id, "PiNetwork $ " + format_price(execute_Scrap(url)) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $ 109.356 USD " )
@@ -244,6 +244,21 @@ if __name__ == "__main__":
     tr_webhook.start()
     pulse_thread_instance = threading.Thread(target=pulse_thread, daemon=True)
     pulse_thread_instance.start()
+    
+    def execute_Scrap(url):
+        result = []  # Lista para almacenar el resultado
+
+        def scrap_wrapper(url):
+            price = scrap(url)
+            result.append(price)  # Almacenar el resultado en la lista
+
+        scrap_thread = threading.Thread(target=scrap_wrapper, args=(url,))
+        scrap_thread.start()
+        scrap_thread.join()  # Esperar a que el thread termine
+
+        return result[0] if result else None  # Devolver el resultado
+    
+
    
     print("through the threads....")
 #*************END*********************************************************
