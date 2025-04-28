@@ -227,20 +227,14 @@ def get_btc_dominance():
 def format_price(price):
     try:
         if isinstance(price, str):
-            print("price & type inside format: ", price, type(price)) # depuracion
-            # Eliminar separadores de miles si existen
             price = price.replace(",", "")  
-            price = price.replace(",", "") #.replace(",", "X").replace(".", ",").replace("X", ".")           
+            price = price.replace(",", "")           
             fl_price= float(price)
             formatted_price = "{:,.2f}".format(fl_price).replace(",", "X").replace(".", ",").replace("X", ".")
             return formatted_price
         else:
             # Convertir a float y formatear manualmente
-            print("price & type inside format: ", price, type(price)) # depuracion
-            
-            print("price no es un string")
-            formatted_price = "{:,.2f}".format(price).replace(",", "X").replace(".", ",").replace("X", ".")
-            print("formatted price: ", formatted_price)
+            formatted_price = "{:,.2f}".format(price).replace(",", "X").replace(".", ",").replace("X", ".")                        
             return formatted_price
     except ValueError:  
         print("Error al formatear el precio. Asegúrate de que sea un número válido.")
