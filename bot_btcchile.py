@@ -221,8 +221,7 @@ def format_price(price):
         return price
     
 def send_pulse():
-    alerta = ("₿itcoin reach new ATH at ${} USD \n"
-              "      ✰ ℒiℯხřℯ_ďℯ_₿ọt 🄰🄻🄴🅁🅃 ✰")
+    alerta = ("✰ ℒiℯხřℯ_ďℯ_₿ọt 🄰🄻🄴🅁🅃 ✰")
     #base_url = "https://api.telegram.org/bot7462883359:AAEX0D4FEjeieBumI-yP6bC32Xef9Oc2cPM/sendMessage?chat_id=-1001328435512&text='{}'".format(alerta)  ### token & id for liebre_de_bot
     base_url = "https://api.telegram.org/bot7204814417:AAEJ68GT9AyzFWYYLke9V6EnWnLkr1cYdl8/sendMessage?chat_id=-1002204244381&text='{}'".format(alerta)  ### token & id for liebre_de_test
     requests.get(base_url)
@@ -230,7 +229,7 @@ def send_pulse():
 def pulse_thread():
     while True:
         send_pulse()
-        time.sleep(50)  # Esperar 50 segundos antes de enviar el siguiente mensaje
+        time.sleep(30)  # Esperar 50 segundos antes de enviar el siguiente mensaje
 
 
 
