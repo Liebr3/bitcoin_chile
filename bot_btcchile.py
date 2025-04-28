@@ -16,37 +16,19 @@ from selenium.webdriver.chrome.options import Options
 from tradingview_ta import TA_Handler, Interval, Exchange
 from dotenv import load_dotenv
 
-###seccion de testeo con ngrok
-# def start_webhook():
-#     # Configuración del webhook
-#     bot.remove_webhook()
-#     time.sleep(1)
-#     bot.set_webhook(url="https://bitcoin-chile-bot.onrender.com")
-#     #https://bitcoin-chile-bot.onrender.com
-#     serve(web_server, host="0.0.0.0", port=5000)
-from pyngrok import ngrok, conf  # to create tunneling bt host and server
-#setting ngrok
-def function_bot():
-    print("cargando ngrok")
-    load_dotenv()
-    conf.get_default().config_path = "./config_ngrok.yml"
-    conf.get_default().region = "sa"
-    ngrok.set_auth_token(NGROK_TOKEN)
-    ngrok_tunel = ngrok.connect(5000, bind_tls=True)
-    ngrok_url = ngrok_tunel.public_url
+
+def start_webhook():
+    # Configuración del webhook
     bot.remove_webhook()
     time.sleep(1)
-    bot.set_webhook(url=ngrok_url)
+    bot.set_webhook(url="https://bitcoin-chile-bot.onrender.com")
+    #https://bitcoin-chile-bot.onrender.com
     serve(web_server, host="0.0.0.0", port=5000)
-    print("start nuevo server")
-
 
 
 lock = threading.Lock()
 # Cargar variables de entorno
 load_dotenv()
-NGROK_TOKEN =os.getenv("NGROK_TOKEN")
-
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 print(f"TELEGRAM_TOKEN: '{TELEGRAM_TOKEN}'")  # Depuración
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
@@ -59,8 +41,6 @@ def webhook():
         update = telebot.types.Update.de_json(request.stream.read().decode('UTF-8'))
         bot.process_new_updates([update])
         return 'ok', 200 
-
-
 
 
 
@@ -246,11 +226,10 @@ if __name__ == "__main__":
     
     print("Start the bot")
     
-    # Start ngrok server   
-    # tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
-    # tr_webhook.start()
-    tr_webhook = threading.Thread(name="tr_webhook", target=function_bot)
+    # Start webhook thread   
+    tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
     tr_webhook.start()
+   
     print("through the threads....")
 #*************END*********************************************************
     
