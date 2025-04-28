@@ -16,9 +16,37 @@ from selenium.webdriver.chrome.options import Options
 from tradingview_ta import TA_Handler, Interval, Exchange
 from dotenv import load_dotenv
 
+###seccion de testeo con ngrok
+# def start_webhook():
+#     # Configuración del webhook
+#     bot.remove_webhook()
+#     time.sleep(1)
+#     bot.set_webhook(url="https://bitcoin-chile-bot.onrender.com")
+#     #https://bitcoin-chile-bot.onrender.com
+#     serve(web_server, host="0.0.0.0", port=5000)
+from pyngrok import ngrok, conf  # to create tunneling bt host and server
+#setting ngrok
+def function_bot():
+    print("cargando ngrok")
+    load_dotenv()
+    conf.get_default().config_path = "./config_ngrok.yml"
+    conf.get_default().region = "sa"
+    ngrok.set_auth_token(NGROK_TOKEN)
+    ngrok_tunel = ngrok.connect(5000, bind_tls=True)
+    ngrok_url = ngrok_tunel.public_url
+    bot.remove_webhook()
+    time.sleep(1)
+    bot.set_webhook(url=ngrok_url)
+    serve(web_server, host="0.0.0.0", port=5000)
+    print("start nuevo server")
+
+
+
 lock = threading.Lock()
 # Cargar variables de entorno
 load_dotenv()
+NGROK_TOKEN =os.getenv("NGROK_TOKEN")
+
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 print(f"TELEGRAM_TOKEN: '{TELEGRAM_TOKEN}'")  # Depuración
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
@@ -34,13 +62,6 @@ def webhook():
 
 
 
-def start_webhook():
-    # Configuración del webhook
-    bot.remove_webhook()
-    time.sleep(1)
-    bot.set_webhook(url="https://bitcoin-chile-bot.onrender.com")
-    #https://bitcoin-chile-bot.onrender.com
-    serve(web_server, host="0.0.0.0", port=5000)
 
 
 # bienvenida al usuario
@@ -97,15 +118,15 @@ def price_command(message):
     if '/gold' in mensaje_text.lower(): 
         print("Gold")
         url = "https://www.tradingview.com/symbols/GOLD/"
-        bot.send_message(message.chat.id, "GOLD $ " + format_price(scrap(url) + " USD " ))    
+        bot.send_message(message.chat.id, "GOLD $ " + format_price(scrap(url)) + " USD " )    
     if '/dxy' in mensaje_text.lower(): 
         print("Dollar index")
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
-        bot.send_message(message.chat.id, "DXY $ " + format_price(scrap(url) + " USD " ))
+        bot.send_message(message.chat.id, "DXY $ " + format_price(scrap(url)) + " USD " )
     if '/piusd' in mensaje_text.lower(): 
         print("Pi Network")
         url = "https://www.tradingview.com/symbols/PIUSDT/?exchange=BITGET"
-        bot.send_message(message.chat.id, "PiNetwork $ " + format_price(scrap(url) + " USD " ))
+        bot.send_message(message.chat.id, "PiNetwork $ " + format_price(scrap(url)) + " USD " )
     if '/ath' in mensaje_text.lower(): 
         print("Ultimo ATH de bitcoin")
         bot.send_message(message.chat.id, " ATH $ 109.356 USD " )
@@ -205,13 +226,23 @@ def get_btc_dominance():
     
 def format_price(price):
     try:
-        # Eliminar separadores de miles si existen
         if isinstance(price, str):
-            price = price.replace(",", "")
-        # Convertir a float y formatear manualmente
-        formatted_price = "{:,.2f}".format(float(price)).replace(",", "X").replace(".", ",").replace("X", ".")
-        return formatted_price
-    except ValueError:
+            print("price & type inside format: ", price, type(price)) # depuracion
+            # Eliminar separadores de miles si existen
+            price = price.replace(",", "")  
+            price = price.replace(",", "") #.replace(",", "X").replace(".", ",").replace("X", ".")           
+            fl_price= float(price)
+            formatted_price = "{:,.2f}".format(fl_price).replace(",", "X").replace(".", ",").replace("X", ".")
+            return formatted_price
+        else:
+            # Convertir a float y formatear manualmente
+            print("price & type inside format: ", price, type(price)) # depuracion
+            
+            print("price no es un string")
+            formatted_price = "{:,.2f}".format(price).replace(",", "X").replace(".", ",").replace("X", ".")
+            print("formatted price: ", formatted_price)
+            return formatted_price
+    except ValueError:  
         print("Error al formatear el precio. Asegúrate de que sea un número válido.")
         return price
 
@@ -222,9 +253,10 @@ if __name__ == "__main__":
     print("Start the bot")
     
     # Start ngrok server   
-    tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
+    # tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
+    # tr_webhook.start()
+    tr_webhook = threading.Thread(name="tr_webhook", target=function_bot)
     tr_webhook.start()
-    
     print("through the threads....")
 #*************END*********************************************************
     
