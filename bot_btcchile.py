@@ -30,7 +30,7 @@ lock = threading.Lock()
 # Cargar variables de entorno
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-print(f"TELEGRAM_TOKEN: '{TELEGRAM_TOKEN}'")  # Depuración
+print("TELEGRAM_TOKEN: ✰ ℒiℯხřℯ_ďℯ_₿ọt 🄰🄻🄴🅁🅃 ✰")  # Depuración
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 # webhook
