@@ -220,19 +220,6 @@ def format_price(price):
         print("Error al formatear el precio. Asegúrate de que sea un número válido.")
         return price
     
-def send_pulse():
-    alerta = ("/btc")
-    #base_url = "https://api.telegram.org/bot7462883359:AAEX0D4FEjeieBumI-yP6bC32Xef9Oc2cPM/sendMessage?chat_id=-1001328435512&text='{}'".format(alerta)  ### token & id for liebre_de_bot
-    base_url = "https://api.telegram.org/bot7462883359:AAGs8QGb-NA-PnxXBH262lta7n7-eyF_EZQ/sendMessage?chat_id=-1002204244381&text={}".format(alerta)  ### token & id for liebre_de_test
-    requests.get(base_url)
-
-def pulse_thread():
-    while True:
-        print("Enviando pulso")
-        send_pulse()
-        time.sleep(30)  # Esperar 50 segundos antes de enviar el siguiente mensaje
-
-
 
 #*************MAIN********************************************************
 if __name__ == "__main__":
@@ -243,8 +230,7 @@ if __name__ == "__main__":
     # Start webhook thread   
     tr_webhook = threading.Thread(name="tr_webhook", target=start_webhook)
     tr_webhook.start()
-    pulse_thread_instance = threading.Thread(target=pulse_thread, daemon=True)
-    pulse_thread_instance.start()
+    
     
     def execute_Scrap(url):
         result = []  # Lista para almacenar el resultado
