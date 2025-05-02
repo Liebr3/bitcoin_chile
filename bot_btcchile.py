@@ -55,7 +55,7 @@ def cmd_start(message):
 
 # comandos del bot
 
-@bot.message_handler(commands=["btc", "eth", "sol", "xrp", "mstr", "tsla", "dominance","gold","dxy","piusd", "ath"])
+@bot.message_handler(commands=["btc", "eth", "sol", "xrp", "mstr", "tsla", "dominance","gold","clp","dxy","piusd", "ath"])
 def price_command(message):
     mensaje_text = message.text
     if '/btc' in mensaje_text.lower(): 
@@ -99,6 +99,10 @@ def price_command(message):
         print("Gold")
         url = "https://www.tradingview.com/symbols/GOLD/"
         bot.send_message(message.chat.id, "GOLD $ " + format_price(execute_Scrap(url)) + " USD " )    
+    if '/clp' in mensaje_text.lower(): 
+        print("Dollas peso chileno")
+        url = "https://www.tradingview.com/symbols/USDCLP/?exchange=FX_IDC/"
+        bot.send_message(message.chat.id, "USD/CLP $ " + format_price(execute_Scrap(url)) + " CLP " )    
     if '/dxy' in mensaje_text.lower(): 
         print("Dollar index")
         url = "https://www.tradingview.com/symbols/TVC-DXY/"
@@ -124,6 +128,7 @@ bot.set_my_commands([
     telebot.types.BotCommand("/tsla", "TSLA/USD"),
     telebot.types.BotCommand("/dominance", "Dominancia de BTC"),
     telebot.types.BotCommand("/gold", "Gold/USD"),
+    telebot.types.BotCommand("/clp", "USD/CLP"),
     telebot.types.BotCommand("/dxy", "Dollar index"),
     telebot.types.BotCommand("/piusd", "Pi Network"),
     telebot.types.BotCommand("/ath", "Ultimo ATH de BTC")])
