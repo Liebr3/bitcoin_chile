@@ -90,15 +90,19 @@ def price_command(message):
         exchange = "nasdaq"
         bot.send_message(message.chat.id, f"TSLA $ {format_price(stock_price(symbol, exchange))} USD " )
     
-    if '/dominance' in mensaje_text.lower(): 
-        print("Dominancia de bitcoin")        
-        bot.send_message(message.chat.id,  f" BTC.D {get_btc_dominance()} %")
+    # if '/dominance' in mensaje_text.lower(): 
+    #     print("Dominancia de bitcoin")        
+    #     bot.send_message(message.chat.id,  f" BTC.D {get_btc_dominance()} %")
 
     # SCRAP SECTION
     if '/gold' in mensaje_text.lower(): 
         print("Gold")
         url = "https://www.tradingview.com/symbols/GOLD/"
         bot.send_message(message.chat.id, "GOLD $ " + format_price(execute_Scrap(url)) + " USD " )    
+    if '/dominance' in mensaje_text.lower(): 
+        print("Gold")
+        url = "https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
+        bot.send_message(message.chat.id, "BTC.D " + format_price(execute_Scrap(url)) + " % " )    
     if '/clp' in mensaje_text.lower(): 
         print("Dollas peso chileno")
         url = "https://www.tradingview.com/symbols/USDCLP/?exchange=FX_IDC/"
@@ -190,24 +194,24 @@ def stock_price(symbol, exchange):
 
 
 
-def get_btc_dominance():
-    url = "https://api.coingecko.com/api/v3/global"
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            btc_dominance = data["data"]["market_cap_percentage"]["btc"]
-            return round(btc_dominance, 2)  # Redondear a 2 decimales
-        else:
-            print(f"Error de api....scraping {e}")
-            url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
-            btc_dominance = scrap(url)
-            return btc_dominance
-    except Exception as e:
-        print(f"Error de api....scraping  {e}")
-        url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
-        btc_dominance = scrap(url)
-        return btc_dominance
+# def get_btc_dominance():
+#     url = "https://api.coingecko.com/api/v3/global"
+#     try:
+#         response = requests.get(url)
+#         if response.status_code == 200:
+#             data = response.json()
+#             btc_dominance = data["data"]["market_cap_percentage"]["btc"]
+#             return round(btc_dominance, 2)  # Redondear a 2 decimales
+#         else:
+#             print(f"Error de api....scraping {e}")
+#             url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
+#             btc_dominance = scrap(url)
+#             return btc_dominance
+#     except Exception as e:
+#         print(f"Error de api....scraping  {e}")
+#         url="https://www.tradingview.com/symbols/CRYPTOCAP-BTC.D/"
+#         btc_dominance = scrap(url)
+#         return btc_dominance
     
 def format_price(price):
     try:
